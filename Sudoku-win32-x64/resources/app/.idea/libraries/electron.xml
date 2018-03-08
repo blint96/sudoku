@@ -1,0 +1,22 @@
+<component name="libraryTable">
+  <library name="electron" type="javaScript">
+    <properties>
+      <option name="frameworkName" value="node_modules" />
+      <sourceFilesUrls>
+        <item url="file://$PROJECT_DIR$/node_modules/electron/cli.js" />
+        <item url="file://$PROJECT_DIR$/node_modules/electron/electron.d.ts" />
+        <item url="file://$PROJECT_DIR$/node_modules/electron/index.js" />
+        <item url="file://$PROJECT_DIR$/node_modules/electron/install.js" />
+        <item url="file://$PROJECT_DIR$/node_modules/electron/package.json" />
+      </sourceFilesUrls>
+    </properties>
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/node_modules/electron/cli.js" />
+      <root url="file://$PROJECT_DIR$/node_modules/electron/electron.d.ts" />
+      <root url="file://$PROJECT_DIR$/node_modules/electron/index.js" />
+      <root url="file://$PROJECT_DIR$/node_modules/electron/install.js" />
+      <root url="file://$PROJECT_DIR$/node_modules/electron/package.json" />
+    </CLASSES>
+    <SOURCES />
+  </library>
+</component>

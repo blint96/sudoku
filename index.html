@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <link rel="icon" href="../../../../favicon.ico">
+
+  <!-- Bootstrap core CSS -->
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    .tile-border-right {
+      border-right: 3px blue solid!important;
+    }
+    .tile-border-bottom {
+      border-bottom: 3px blue solid!important;
+    }
+
+    .tile-border {
+      border: 1px #000 solid;
+    }
+
+    .tile {
+      width: 64px;
+      height: 80px;
+    }
+
+    .tile input {
+      width: 48px;
+      height: 48px;
+      margin-top: 18px;
+      margin-left: 5px;
+      text-align: center;
+    }
+
+      .btn-game {
+          width: 100%;
+      }
+  </style>
+</head>
+
+<body style="overflow: hidden;">
+<!-- Begin page content -->
+<div class="row">
+    <div class="col-lg-12">
+        <main role="main" class="container" id="GameContainer" style="margin-top: 10px;">
+        </main>
+    </div>
+</div>
+
+<!-- menu -->
+<div style="position: absolute; right: 0; top:0; width: 350px; padding: 10px;">
+    <div class="row">
+        <div class="col-md-12">
+            <h2>Menu</h2>
+        </div>
+    </div>
+    <div class="row" style="margin-top: 20px;">
+        <div class="col-md-12">
+            <button class="btn btn-primary btn-lg btn-game btn-new-game">Nowa gra</button>
+        </div>
+    </div>
+    <div class="row" style="margin-top: 10px;">
+        <div class="col-md-12">
+            <button class="btn btn-primary btn-lg btn-game">Rozwiąż grę</button>
+        </div>
+    </div>
+    <div class="row" style="margin-top: 10px;">
+        <div class="col-md-12">
+            <button class="btn btn-primary btn-lg btn-game">Zapisz grę</button>
+        </div>
+    </div>
+    <div class="row" style="margin-top: 10px;">
+        <div class="col-md-12">
+            <button class="btn btn-primary btn-lg btn-game">Wczytaj grę</button>
+        </div>
+    </div>
+    <div class="row" style="margin-top: 10px;">
+        <div class="col-md-12">
+            <button class="btn btn-danger btn-lg btn-game btn-close">Zamknij grę</button>
+        </div>
+    </div>
+    <div class="row" style="margin-top: 10px;">
+        <div class="col-md-12">
+            <button class="btn btn-default btn-lg btn-game btn-devtools">Dev tools</button>
+        </div>
+    </div>
+</div>
+
+<!-- Insert this line above script imports  -->
+<script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
+
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="js/jquery-3.3.1.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/game.js"></script>
+
+<script type="text/javascript">
+    // electron
+    const {ipcRenderer} = require('electron');
+    $('.btn-close').click(function() {
+        ipcRenderer.send('close-app', '');
+    });
+    $('.btn-devtools').click(function() {
+        ipcRenderer.send('open-dev', '');
+    });
+    $('.btn-new-game').click(function() {
+        game.create_game();
+    });
+
+    // game
+    var game = new SudokuClass($("#GameContainer"));
+    game.raw_map();
+</script>
+
+<!-- Insert this line after script imports -->
+<script>if (window.module) module = window.module;</script>
+</body>
+</html>
