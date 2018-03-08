@@ -64,7 +64,7 @@
     </div>
     <div class="row" style="margin-top: 10px;">
         <div class="col-md-12">
-            <button class="btn btn-primary btn-lg btn-game">Rozwiąż grę</button>
+            <button class="btn btn-primary btn-lg btn-game btn-solve">Rozwiąż grę</button>
         </div>
     </div>
     <div class="row" style="margin-top: 10px;">
@@ -108,13 +108,16 @@
     $('.btn-devtools').click(function() {
         ipcRenderer.send('open-dev', '');
     });
-    $('.btn-new-game').click(function() {
-        game.create_game();
-    });
 
     // game
     var game = new SudokuClass($("#GameContainer"));
     game.raw_map();
+    $('.btn-new-game').click(function() {
+        game.create_game();
+    });
+    $('.btn-solve').click(function() {
+        game.solve(0);
+    });
 </script>
 
 <!-- Insert this line after script imports -->

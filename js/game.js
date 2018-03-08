@@ -30,84 +30,141 @@ var SudokuClass = (function () {
             console.log(tiles);
         };
 
-        // check for tile
-        this.valid_tile = function(x, y) {
+        // change value of input
+        this.input = function(x, y, value) {
+            if(this.valid_tile(x, y, value)) {
+                $('.x-' + x).find('.tile-' + y).find('.ipt-sudoku').val(value);
+                return true;
+            } else {
+                return false;
+            }
+        };
 
+        // solve sudoku
+        this.solve = function(step, skipValue = -1)
+        {
+            if(step < 81) {
+                if (step == 0) {
+                    let startValue = Math.floor(Math.random() * 9) + 1;
+                    this.input(0, 0, startValue);
+                    return this.solve(step + 1);
+                }
+
+                // prepare value, x and y
+                let value = Math.floor(Math.random() * 9) + 1;
+                let x = step % 9;
+                let y = Math.floor(step / 9);
+
+                // skip skipped todo
+                if(value == skipValue) {
+                    value = Math.floor(Math.random() * 9) + 1;
+                }
+
+                // check
+                if(!this.input(x, y, value)) {
+                    let found = false;
+                    for(let i = 1; i < 9; i++) {
+                        value = i;
+                        if(this.input(x, y, value))
+                            found = true;
+                    }
+                    if(!found) {
+                        let tX = ((step - 1) % 9);
+                        let tY = Math.floor((step -1) /9);
+                        return this.solve(step - 1, tiles[tX][tY]);
+                    }
+                }
+
+                return this.solve(step + 1);
+            }
+        };
+
+        // check for tile
+        this.valid_tile = function(x, y, valueStr) {
+            //let value = parseInt($(this).val());
+            let value = parseInt(valueStr);
+            if((value < 1 || value > 9) || isNaN(value) && valueStr.length > 0) {
+                //alert('Wartość nie może być mniejsza niż 1 i większa niż 9!');
+                //return $(this).val('');
+                return false;
+            }
+
+            // this y & x
+            //let y = parseInt($(this).closest('.tile').data("y"));
+            //let x = parseInt($(this).closest('.row').data('x'));
+
+            let start_quarter_x = 0;
+            let start_quarter_y = 0;
+
+            // który x i ktory y
+            if(y > 0 && y < 3)
+                start_quarter_y = 0;
+            else if(y >= 3 && y < 6)
+                start_quarter_y = 3;
+            else if(y >= 6)
+                start_quarter_y = 6;
+            if(x > 0 && x < 3)
+                start_quarter_x = 0;
+            else if(x >= 3 && x < 6)
+                start_quarter_x = 3;
+            else if(x >= 6)
+                start_quarter_x = 6;
+
+            for(let tx = 0; tx < 9; tx++) {
+                for(let ty = 0; ty < 9; ty++) {
+                    if(tx == x && ty == y)
+                        continue;
+
+                    // sprawdzanie osi X
+                    if(tx == x) {
+                        if(typeof tiles[tx][ty] !== undefined && typeof tiles[tx][ty] !== NaN) {
+                            if(parseInt(tiles[tx][ty]) == value) {
+                                //alert('Już istnieje taka wartość w tym wierszu lub kolumnie!');
+                                //$(this).val('');
+                                return false;
+                            }
+                        }
+                    }
+
+                    // sprawdzanie osi Y
+                    if(ty == y) {
+                        if(typeof tiles[tx][ty] !== undefined && typeof tiles[tx][ty] !== NaN) {
+                            if(parseInt(tiles[tx][ty]) == value) {
+                                //alert('Już istnieje taka wartość w tym wierszu lub kolumnie!');
+                                //$(this).val('');
+                                return false;
+                            }
+                        }
+                    }
+
+                    // sprawdzanie kwadrata
+                    if(tx >= start_quarter_x && tx < (start_quarter_x + 3) && ty >= start_quarter_y && ty < (start_quarter_y + 3)) {
+                        if(typeof tiles[tx][ty] !== undefined && typeof tiles[tx][ty] !== NaN) {
+                            if(parseInt(tiles[tx][ty]) == value) {
+                                //alert('Już istnieje taka wartość w tym kwadracie!');
+                                //$(this).val('');
+                                return false;
+                            }
+                        }
+                    }
+
+                }
+            }
+
+            tiles[x][y] = value;
+            block = false;
+            return true;
         };
         
         // handle inputs
         this.ipt_handlers = function() {
-            $('.ipt-sudoku').keyup(function() { 
-                let value = parseInt($(this).val());
-                if((value < 1 || value > 9) || isNaN(value) && $(this).val().length > 0) {
-                    alert('Wartość nie może być mniejsza niż 1 i większa niż 9!');
-                    return $(this).val('');
-                }
-                
-                // this y & x
+            $('.ipt-sudoku').keyup(function() {
+                let value = $(this).val();
                 let y = parseInt($(this).closest('.tile').data("y"));
                 let x = parseInt($(this).closest('.row').data('x'));
                 
-                let start_quarter_x = 0;
-                let start_quarter_y = 0;
-                
-                // który x i ktory y
-                if(y > 0 && y < 3)
-                    start_quarter_y = 0;
-                else if(y >= 3 && y < 6)
-                    start_quarter_y = 3;
-                else if(y >= 6) 
-                    start_quarter_y = 6;
-                if(x > 0 && x < 3) 
-                    start_quarter_x = 0;
-                else if(x >= 3 && x < 6) 
-                    start_quarter_x = 3;
-                else if(x >= 6)
-                    start_quarter_x = 6;
-                
-                for(let tx = 0; tx < 9; tx++) {
-                    for(let ty = 0; ty < 9; ty++) {
-                        if(tx == x && ty == y)
-                            continue;
-                        
-                        // sprawdzanie osi X
-                        if(tx == x) {
-                            if(typeof tiles[tx][ty] !== undefined && typeof tiles[tx][ty] !== NaN) {
-                                if(parseInt(tiles[tx][ty]) == value) {
-                                    alert('Już istnieje taka wartość w tym wierszu lub kolumnie!');
-                                    $(this).val('');
-                                    return false;
-                                }
-                            }
-                        }
-                        
-                        // sprawdzanie osi Y
-                        if(ty == y) {
-                            if(typeof tiles[tx][ty] !== undefined && typeof tiles[tx][ty] !== NaN) {
-                                if(parseInt(tiles[tx][ty]) == value) {
-                                    alert('Już istnieje taka wartość w tym wierszu lub kolumnie!');
-                                    $(this).val('');
-                                    return false;
-                                }
-                            }
-                        }
-                        
-                        // sprawdzanie kwadrata
-                        if(tx >= start_quarter_x && tx < (start_quarter_x + 3) && ty >= start_quarter_y && ty < (start_quarter_y + 3)) {
-                            if(typeof tiles[tx][ty] !== undefined && typeof tiles[tx][ty] !== NaN) {
-                                if(parseInt(tiles[tx][ty]) == value) {
-                                    alert('Już istnieje taka wartość w tym kwadracie!');
-                                    $(this).val('');
-                                    return false;
-                                }
-                            }
-                        }
-                        
-                    }
-                }
-                
-                tiles[x][y] = value;
-                block = false;
+                if(!game.valid_tile(x, y, value))
+                    $(this).val('');
             });
         }
         
