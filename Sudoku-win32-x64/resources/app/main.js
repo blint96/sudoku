@@ -40,7 +40,10 @@ function createWindow () {
 
 ipcMain.on('close-app', (event, arg)=> {
     app.quit();
-})
+});
+ipcMain.on('open-dev', (event, arg)=> {
+    mainWindow.openDevTools();
+});
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.

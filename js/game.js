@@ -9,6 +9,8 @@ var SudokuClass = (function () {
         var name = 'Unknown';
         var container = element;
         var block = false;
+
+        var stackHotfix = 0;
         
         var tiles = new Array();
         for(let i = 0; i < 9; i++)
@@ -52,10 +54,29 @@ var SudokuClass = (function () {
             }
         };
 
+        this.clear_input = function(x, y) {
+            $('.x-' + x).find('.tile-' + y).find('.ipt-sudoku').val('');
+            tiles[x][y] = undefined;
+        }
+
+        // hotfix
+        this.solveFunction = function() {
+            while(this.is_completed() == false) {
+                this.solve(0);
+            }
+            return true;
+        };
+
         // solve sudoku
+        // Max call stack problem - this.solveFunction "repairs" it
         this.solve = function(step, skipValue = -1)
         {
-            counter += 1;
+            stackHotfix += 1;
+            if(stackHotfix > 3500) {
+                stackHotfix = 0;
+                return;
+            }
+
             if(step < 81) {
                 if (step == 0) {
                     let startValue = Math.floor(Math.random() * 9) + 1;
@@ -64,26 +85,8 @@ var SudokuClass = (function () {
                 }
 
                 // prepare value, x and y
-                //let value = Math.floor(Math.random() * 9) + 1;
                 let x = step % 9;
                 let y = Math.floor(step / 9);
-
-                // skip skipped todo
-                /*if(value == skipValue) {
-                    var found = false;
-                    for(let i = 1; i < 9; i++) {
-                        if(i == skipValue) continue;
-                        if(this.input(x, y, i)) {
-                            found = true;
-                        }
-                    }
-                    if(!found) {
-                        let tX = ((step - 1) % 9);
-                        let tY = Math.floor((step - 1) / 9);
-                        return this.solve(step - 1, tiles[tX][tY]);
-                    }
-                    value = Math.floor(Math.random() * 9) + 1;
-                }*/
 
                 let found = false;
                 let value = Math.floor(Math.random() * 9) + 1;
@@ -239,10 +242,30 @@ var SudokuClass = (function () {
             this.ipt_handlers();
         };
 
-        // create game
-        this.create_game = function() {
-            // TODO: game difficulty
+        this.clear_board = function()
+        {
+            for(let x = 0; x < 9; x++) {
+                for(let y = 0; y < 9; y++) {
+                    this.clear_input(x, y);
+                }
+            }
+            return true;
+        };
 
+        // create game
+        this.create_game = function(difficulty) {
+            // TODO: game difficulty
+            this.clear_board();
+            if(this.solveFunction() == true) {
+                for(let x = 0; x < 9; x++) {
+                    for(let y = 0; y < 9; y++) {
+                        let random = Math.floor(Math.random() * 10) + 1;
+                        if(random < difficulty) {
+                            this.clear_input(x, y);
+                        }
+                    }
+                }
+            }
         };
     };
 
