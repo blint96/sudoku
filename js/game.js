@@ -69,6 +69,11 @@ var SudokuClass = (function () {
                 this.solve(0);
                 counter += 1;
 
+                if(!clearFlag && counter > 300) {
+                    alert('Prawdopodobnie brak jakiegokolwiek rozwiązania.');
+                    return false;
+                }
+
                 if(counter > 50 && clearFlag) {
                     counter = 0;
                     this.clear_board();
