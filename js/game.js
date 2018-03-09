@@ -27,11 +27,13 @@ var SudokuClass = (function () {
                 throw 'Name must be 2-20 characters long.';
             name = value;
         };
-        
+
+        //
         this.dump_array = function() {
             console.log(tiles);
         };
 
+        //
         this.is_completed = function()
         {
             let completed = true;
@@ -54,15 +56,23 @@ var SudokuClass = (function () {
             }
         };
 
+        //
         this.clear_input = function(x, y) {
             $('.x-' + x).find('.tile-' + y).find('.ipt-sudoku').val('');
             tiles[x][y] = undefined;
         }
 
         // hotfix
-        this.solveFunction = function() {
+        this.solveFunction = function(clearFlag = true) {
+            var counter = 0;
             while(this.is_completed() == false) {
                 this.solve(0);
+                counter += 1;
+
+                if(counter > 50 && clearFlag) {
+                    counter = 0;
+                    this.clear_board();
+                }
             }
             return true;
         };
@@ -242,6 +252,7 @@ var SudokuClass = (function () {
             this.ipt_handlers();
         };
 
+        //
         this.clear_board = function()
         {
             for(let x = 0; x < 9; x++) {
