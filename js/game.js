@@ -52,18 +52,11 @@ var SudokuClass = (function () {
             }
         };
 
-        this.complete = function()
-        {
-            while(this.is_completed() == false) {
-                this.solve(0);
-            }
-        };
-
         // solve sudoku
         this.solve = function(step, skipValue = -1)
         {
+            counter += 1;
             if(step < 81) {
-                counter += 1;
                 if (step == 0) {
                     let startValue = Math.floor(Math.random() * 9) + 1;
                     this.input(0, 0, startValue);
@@ -71,7 +64,7 @@ var SudokuClass = (function () {
                 }
 
                 // prepare value, x and y
-                let value = Math.floor(Math.random() * 9) + 1;
+                //let value = Math.floor(Math.random() * 9) + 1;
                 let x = step % 9;
                 let y = Math.floor(step / 9);
 
@@ -92,20 +85,25 @@ var SudokuClass = (function () {
                     value = Math.floor(Math.random() * 9) + 1;
                 }*/
 
-                // check
-                if(!this.input(x, y, value)) {
-                    let found = false;
-                    for(let i = 1; i < 9; i++) {
-                        if(i == skipValue) continue;
-                        value = i;
-                        if(this.input(x, y, value))
-                            found = true;
+                let found = false;
+                let value = Math.floor(Math.random() * 9) + 1;
+
+                if(value != skipValue && this.input(x, y, value))
+                    return this.solve(step + 1);
+
+                for(let i = 1; i <= 9; i++) {
+                    if(i == skipValue) continue;
+
+                    if(this.input(x, y, i)) {
+                        found = true;
+                        return this.solve(step + 1);
                     }
-                    if(!found) {
-                        let tX = ((step - 1) % 9);
-                        let tY = Math.floor((step -1) /9);
-                        return this.solve(step - 1, tiles[tX][tY], skipValue);
-                    }
+                }
+
+                if(!found) {
+                    let tX = ((step - 1) % 9);
+                    let tY = Math.floor((step - 1) / 9);
+                    return this.solve(step - 1, tiles[tX][tY]);
                 }
 
                 return this.solve(step + 1);
