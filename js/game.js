@@ -30,6 +30,18 @@ var SudokuClass = (function () {
             console.log(tiles);
         };
 
+        this.is_completed = function()
+        {
+            let completed = true;
+            for(let x = 0; x < 9; x++) {
+                for(let y = 0; y < 9; y++) {
+                    if(parseInt(tiles[x][y]) <= 0 || typeof tiles[x][y] == 'undefined')
+                        completed = false;
+                }
+            }
+            return completed;
+        };
+
         // change value of input
         this.input = function(x, y, value) {
             if(this.valid_tile(x, y, value)) {
@@ -40,10 +52,18 @@ var SudokuClass = (function () {
             }
         };
 
+        this.complete = function()
+        {
+            while(this.is_completed() == false) {
+                this.solve(0);
+            }
+        };
+
         // solve sudoku
         this.solve = function(step, skipValue = -1)
         {
             if(step < 81) {
+                counter += 1;
                 if (step == 0) {
                     let startValue = Math.floor(Math.random() * 9) + 1;
                     this.input(0, 0, startValue);
@@ -56,14 +76,27 @@ var SudokuClass = (function () {
                 let y = Math.floor(step / 9);
 
                 // skip skipped todo
-                if(value == skipValue) {
+                /*if(value == skipValue) {
+                    var found = false;
+                    for(let i = 1; i < 9; i++) {
+                        if(i == skipValue) continue;
+                        if(this.input(x, y, i)) {
+                            found = true;
+                        }
+                    }
+                    if(!found) {
+                        let tX = ((step - 1) % 9);
+                        let tY = Math.floor((step - 1) / 9);
+                        return this.solve(step - 1, tiles[tX][tY]);
+                    }
                     value = Math.floor(Math.random() * 9) + 1;
-                }
+                }*/
 
                 // check
                 if(!this.input(x, y, value)) {
                     let found = false;
                     for(let i = 1; i < 9; i++) {
+                        if(i == skipValue) continue;
                         value = i;
                         if(this.input(x, y, value))
                             found = true;
@@ -71,7 +104,7 @@ var SudokuClass = (function () {
                     if(!found) {
                         let tX = ((step - 1) % 9);
                         let tY = Math.floor((step -1) /9);
-                        return this.solve(step - 1, tiles[tX][tY]);
+                        return this.solve(step - 1, tiles[tX][tY], skipValue);
                     }
                 }
 
