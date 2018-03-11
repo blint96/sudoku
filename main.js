@@ -8,6 +8,7 @@ const path = require('path')
 const url = require('url')
 
 const {ipcMain} = require('electron')
+const {dialog} = require('electron')
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -38,6 +39,42 @@ function createWindow () {
   })
 }
 
+// Connecting with renderer
+ipcMain.on('open-file', (event, arg) => {
+    const fs = require('fs');
+    dialog.showOpenDialog({
+        properties: ['openFile'],
+        filters: [
+            {name: 'Zapis gry', extensions: ['txt']}
+        ]
+    }, function (files) {
+        if (files !== undefined) {
+            fs.readFile(files[0], 'utf-8', (err, data) => {
+                //console.log(data);
+                mainWindow.webContents.send('open-file-event', data);
+            });
+        }
+    });
+});
+ipcMain.on('save-file', (event, arg) => {
+    const fs = require('fs');
+    var savePath = dialog.showSaveDialog({});
+    var saveString = '';
+
+    // parse arg
+    for(let x = 0; x < 9; x++) {
+        for(let y = 0; y < 9; y++) {
+            if(arg[x][y] == undefined) arg[x][y] = 0;
+            saveString += arg[x][y] + ((y == 8 && x == 8) ? '' : ',');
+        }
+    }
+    console.log(saveString);
+    if(savePath !== undefined) {
+        fs.writeFile(savePath, saveString, function (err) {
+
+        });
+    }
+});
 ipcMain.on('close-app', (event, arg)=> {
     app.quit();
 });

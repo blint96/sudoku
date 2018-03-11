@@ -69,12 +69,12 @@
     </div>
     <div class="row" style="margin-top: 10px;">
         <div class="col-md-12">
-            <button class="btn btn-primary btn-lg btn-game">Zapisz grę</button>
+            <button class="btn btn-primary btn-lg btn-game btn-save">Zapisz grę</button>
         </div>
     </div>
     <div class="row" style="margin-top: 10px;">
         <div class="col-md-12">
-            <button class="btn btn-primary btn-lg btn-game">Wczytaj grę</button>
+            <button class="btn btn-primary btn-lg btn-game btn-load" id="btn-load">Wczytaj grę</button>
         </div>
     </div>
     <div class="row" style="margin-top: 10px;">
@@ -84,7 +84,7 @@
     </div>
     <div class="row" style="margin-top: 10px;">
         <div class="col-md-12">
-            <button class="btn btn-default btn-lg btn-game btn-devtools collapse">Dev tools</button>
+            <button class="btn btn-default btn-lg btn-game btn-devtools">Dev tools</button>
         </div>
     </div>
 </div>
@@ -115,6 +115,11 @@
                         <button class="btn btn-default btn-game btn-new-game" data-diff="8">Trudny</button>
                     </div>
                 </div>
+                <div class="row" style="margin-top: 10px;">
+                    <div class="col-md-12">
+                        <button class="btn btn-default btn-game btn-new-game" data-diff="11">Pusta plansza</button>
+                    </div>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Zamknij</button>
@@ -143,6 +148,27 @@
         ipcRenderer.send('open-dev', '');
     });
 
+    // open-file-event
+    ipcRenderer.on('open-file-event', function(event, data) {
+        let array = data.split(',');
+        let tmpArray = new Array();
+        for(let i = 0; i < 9; i++)
+            tmpArray[i] = new Array();
+
+        for(let step = 0; step < 81; step++) {
+            if(parseInt(array[step]) == 0 || array[step] == undefined) {
+                // jakis error, puste pole
+            } else {
+                let x = step % 9;
+                let y = Math.floor(step / 9);
+                tmpArray[x][y] = parseInt(array[step]);
+            }
+        }
+
+
+        game.load_array(tmpArray);
+    });
+
     // game
     var counter = 0;
     var game = new SudokuClass($("#GameContainer"));
@@ -153,7 +179,13 @@
         $('#selectLevel').modal('hide');
     });
     $('.btn-solve').click(function() {
-        game.solveFunction();
+        game.solveFunction(false);
+    });
+    $('.btn-save').click(function() {
+        ipcRenderer.send('save-file', game.dump_array());
+    });
+    $('.btn-load').click(function() {
+        ipcRenderer.send('open-file');
     });
 </script>
 

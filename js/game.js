@@ -28,9 +28,20 @@ var SudokuClass = (function () {
             name = value;
         };
 
+        this.load_array = function(array) {
+            console.log(array);
+            for(let x = 0; x < 9; x++) {
+                for(let y = 0; y < 9; y++) {
+                    if(typeof array[x][y] !== "undefined")
+                        this.input(y, x, array[x][y].toString());
+                }
+            }
+        };
+
         //
         this.dump_array = function() {
             console.log(tiles);
+            return tiles;
         };
 
         //

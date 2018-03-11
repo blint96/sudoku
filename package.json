@@ -19,5 +19,8 @@
   "devDependencies": {
     "electron": "~1.8.2",
     "electron-packager": "^11.1.0"
+  },
+  "dependencies": {
+    "remote": "^0.2.6"
   }
 }

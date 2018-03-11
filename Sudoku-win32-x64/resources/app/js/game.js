@@ -27,11 +27,24 @@ var SudokuClass = (function () {
                 throw 'Name must be 2-20 characters long.';
             name = value;
         };
-        
-        this.dump_array = function() {
-            console.log(tiles);
+
+        this.load_array = function(array) {
+            console.log(array);
+            for(let x = 0; x < 9; x++) {
+                for(let y = 0; y < 9; y++) {
+                    if(typeof array[x][y] !== "undefined")
+                        this.input(y, x, array[x][y].toString());
+                }
+            }
         };
 
+        //
+        this.dump_array = function() {
+            console.log(tiles);
+            return tiles;
+        };
+
+        //
         this.is_completed = function()
         {
             let completed = true;
@@ -54,15 +67,28 @@ var SudokuClass = (function () {
             }
         };
 
+        //
         this.clear_input = function(x, y) {
             $('.x-' + x).find('.tile-' + y).find('.ipt-sudoku').val('');
             tiles[x][y] = undefined;
         }
 
         // hotfix
-        this.solveFunction = function() {
+        this.solveFunction = function(clearFlag = true) {
+            var counter = 0;
             while(this.is_completed() == false) {
                 this.solve(0);
+                counter += 1;
+
+                if(!clearFlag && counter > 300) {
+                    alert('Prawdopodobnie brak jakiegokolwiek rozwiązania.');
+                    return false;
+                }
+
+                if(counter > 50 && clearFlag) {
+                    counter = 0;
+                    this.clear_board();
+                }
             }
             return true;
         };
@@ -242,6 +268,7 @@ var SudokuClass = (function () {
             this.ipt_handlers();
         };
 
+        //
         this.clear_board = function()
         {
             for(let x = 0; x < 9; x++) {
