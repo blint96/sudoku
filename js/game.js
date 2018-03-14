@@ -80,8 +80,9 @@ var SudokuClass = (function () {
                 this.solve(0);
                 counter += 1;
 
-                if(!clearFlag && counter > 300) {
-                    alert('Prawdopodobnie brak jakiegokolwiek rozwiązania.');
+                if(!clearFlag && counter > 50) {
+                    //alert('Prawdopodobnie brak jakiegokolwiek rozwiązania.');
+                    this.solveFunction();
                     return false;
                 }
 

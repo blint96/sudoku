@@ -58,7 +58,12 @@ ipcMain.on('open-file', (event, arg) => {
 });
 ipcMain.on('save-file', (event, arg) => {
     const fs = require('fs');
-    var savePath = dialog.showSaveDialog({});
+    var savePath = dialog.showSaveDialog({
+        properties: ['openFile'],
+        filters: [
+            {name: 'Zapis gry', extensions: ['txt']}
+        ]
+    });
     var saveString = '';
 
     // parse arg
