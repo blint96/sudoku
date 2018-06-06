@@ -28,6 +28,7 @@ var SudokuClass = (function () {
             name = value;
         };
 
+        // wczytywanie tablicy na plansze gry
         this.load_array = function(array) {
             console.log(array);
             for(let x = 0; x < 9; x++) {
@@ -38,13 +39,13 @@ var SudokuClass = (function () {
             }
         };
 
-        //
+        // zrzucenie całej tablicy do konsoli
         this.dump_array = function() {
             console.log(tiles);
             return tiles;
         };
 
-        //
+        // funkcja sprawdza, czy sudoku jest rozwiązane
         this.is_completed = function()
         {
             let completed = true;
@@ -57,7 +58,7 @@ var SudokuClass = (function () {
             return completed;
         };
 
-        // change value of input
+        // wpisywanie wartości w pole o offsecie X Y
         this.input = function(x, y, value) {
             if(this.valid_tile(x, y, value)) {
                 $('.x-' + x).find('.tile-' + y).find('.ipt-sudoku').val(value);
@@ -67,13 +68,14 @@ var SudokuClass = (function () {
             }
         };
 
-        //
+        // usuwanie wartości na offsecie X Y
         this.clear_input = function(x, y) {
             $('.x-' + x).find('.tile-' + y).find('.ipt-sudoku').val('');
             tiles[x][y] = undefined;
         }
 
-        // hotfix
+        // funkcja rozpoczynająca i kontrolująca rozwiązywanie sudoku
+        // zapobiega przerwaniu przed rozwiązaniem
         this.solveFunction = function(clearFlag = true) {
             var counter = 0;
             while(this.is_completed() == false) {
@@ -96,6 +98,7 @@ var SudokuClass = (function () {
 
         // solve sudoku
         // Max call stack problem - this.solveFunction "repairs" it
+        // tutaj funkcja która rozwiązuje rekurencyjnie sudoku
         this.solve = function(step, skipValue = -1)
         {
             stackHotfix += 1;
@@ -140,7 +143,7 @@ var SudokuClass = (function () {
             }
         };
 
-        // check for tile
+        // sprawdzanie czy na offsecie /X Y/ można wstawić wartość /valueStr/
         this.valid_tile = function(x, y, valueStr) {
             //let value = parseInt($(this).val());
             let value = parseInt(valueStr);
